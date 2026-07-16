@@ -2,6 +2,18 @@
 session_start();
 include "../config/config.php";
 
+require '../vendor/autoload.php';
+
+use Aws\S3\S3Client;
+use Aws\Exception\AwsException;
+
+$bucket = "cloudmart-product-sahil";
+
+$s3 = new S3Client([
+    'version' => 'latest',
+    'region'  => 'us-east-1'
+]);
+
 if (!isset($conn) && isset($con)) {
     $conn = $con;
 }
@@ -19,12 +31,17 @@ if(isset($_POST['add_product']))
     $price        = $_POST['price'];
     $stock        = $_POST['stock'];
 
-    $imageName = time() . "_" . $_FILES['image']['name'];
-    $target = "../uploads/products/" . $imageName;
+    $imageName = time() . "_" . basename($_FILES['image']['name']);
 
-    if(move_uploaded_file($_FILES['image']['tmp_name'], $target))
-    {
-        $imagePath = "uploads/products/" . $imageName;
+    try {
+
+        $result = $s3->putObject([
+            'Bucket'     => $bucket,
+            'Key'        => "products/" . $imageName,
+            'SourceFile' => $_FILES['image']['tmp_name']
+        ]);
+
+        $imagePath = $result['ObjectURL'];
 
         $sql = "INSERT INTO products
         (category_id, product_name, description, price, stock, image_url)
@@ -39,6 +56,11 @@ if(isset($_POST['add_product']))
         {
             echo mysqli_error($conn);
         }
+
+    }
+    catch (AwsException $e)
+    {
+        echo $e->getMessage();
     }
 }
 
@@ -172,7 +194,7 @@ while($row = mysqli_fetch_assoc($result))
 
 <td>
 
-<img src="../<?php echo $row['image_url']; ?>" width="70">
+<img src="<?php echo $row['image_url']; ?>" width="70">
 
 </td>
 
