@@ -1,8 +1,8 @@
 <?php
 
-$host = "localhost";
-$user = "root";
-$pass = "";
+$host = "YOUR-RDS-ENDPOINT";
+$user = "sahil";
+$pass = "YOUR_PASSWORD";
 $dbname = "cloudmart_db";
 
 $conn = mysqli_connect($host, $user, $pass, $dbname);
