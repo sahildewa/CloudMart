@@ -130,8 +130,8 @@ The application follows a highly available AWS architecture.
 
 ### Amazon RDS
 
-![alt text](rds/DBstructure.png)
-![alt text](rds/connectivity.png)
+![alt text](images/rds/DBstructure.png)
+![alt text](images/rds/connectivity.png)
 
 ---
 
